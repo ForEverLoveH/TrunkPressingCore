@@ -1261,6 +1261,7 @@
             this.Text = "测试页面";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RunTest_FormClosed);
             this.Load += new System.EventHandler(this.RunTest_Load);
+            //this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.RunTestWindow_HelpRequested);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RunTest_KeyDown);
             this.contextMenuStrip1.ResumeLayout(false);
             this.recImgIndex.ResumeLayout(false);
