@@ -34,7 +34,6 @@ using TrunkPressingCore.GameConst;
 using TrunkPressingCore.GameModel;
 using TrunkPressingCore.GameSystem;
 using TrunkPressingCore.SQLite;
- 
 
 namespace TrunkPressingCore.Window
 {
@@ -44,6 +43,7 @@ namespace TrunkPressingCore.Window
         {
             InitializeComponent();
         }
+
         public static string strMainModule = System.AppDomain.CurrentDomain.BaseDirectory + "data\\";
 
         //项目编号
@@ -52,38 +52,48 @@ namespace TrunkPressingCore.Window
         public string formTitle = "";
 
         public int _TestMethod = 0;
+
         //组名
         public string _GroupName = "";
+
         //项目名
         public string _ProjectName = "";
+
         //测试最大次数
         public int _RoundCount = 1;
+
         //当前测试轮次
         public int RoundCount0 = 1;
+
         //项目模式
         public string _Type = "";
+
         //最好成绩模式 0:取大值 1:取小值
         /// <summary>
         /// 0:末位删除 1:非零进一 2:四舍五入
         /// </summary>
         public int _BestScoreMode = 0;
+
         //测试模式 0:自动下一位 1:自动下一轮
         public int _TestMode = 0;
+
         //保留位数
         public int _FloatType = 0;
+
         //数据库
         public SQLiteHelper sQLiteHelper = null;
 
         //考试组分配信息
-        RaceStudentData nowRaceStudentData = new RaceStudentData();
+        private RaceStudentData nowRaceStudentData = new RaceStudentData();
 
-        string dangwei = "米";
-        int pBox1Width = 0;
-        int pBox1Height = 0;
+        private string dangwei = "米";
+        private int pBox1Width = 0;
+        private int pBox1Height = 0;
+
         /// <summary>
         /// 存储考生数据
         /// </summary>
-        class RaceStudentData
+        private class RaceStudentData
         {
             public RaceStudentData()
             {
@@ -95,26 +105,31 @@ namespace TrunkPressingCore.Window
                 RoundId = 1;
                 state = 0;
             }
+
             public string id;//编号
             public string idNumber;//考号
             public string name;//姓名
             public double score;//成绩
             public int RoundId;//轮次
-                               //状态 0:未测试 1:已测试 2:中退 3:缺考 4:犯规 5:弃权
+
+            //状态 0:未测试 1:已测试 2:中退 3:缺考 4:犯规 5:弃权
             public int state;//状态
+
             public string groupName;
         }
+
         public double MeasureLen = 0;//测量长度
         public double MeasureLenX = 0;//测量水平长度
         public double MeasureLenY = 0;//测量垂直长度
-        Boolean Measure = true;//测量长度状态
-        string markPointFile = "markPoint.dat";
-        string nowFileName = "";//当前文件名
-        string nowTestDir = String.Empty;//当前文件目录
-        string ScoreDir = string.Empty;
-        int recTimeR0 = 0;//计时时间
-        int frameSum = 0;
+        private Boolean Measure = true;//测量长度状态
+        private string markPointFile = "markPoint.dat";
+        private string nowFileName = "";//当前文件名
+        private string nowTestDir = String.Empty;//当前文件目录
+        private string ScoreDir = string.Empty;
+        private int recTimeR0 = 0;//计时时间
+        private int frameSum = 0;
         private Thread threadVideo2;
+
         private void RunTest_Load(object sender, EventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -132,8 +147,9 @@ namespace TrunkPressingCore.Window
             serialInit();
             CameraInit();
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -149,16 +165,16 @@ namespace TrunkPressingCore.Window
         /// <param name="threadId">当前线程id</param>
         /// <returns></returns>
         public delegate string AsyncMethodCaller();
+
         /// 与委托对应的方法
         /// </summary>
         /// <param name="callDuration"></param>
         /// <param name="threadId"></param>
         /// <returns></returns>
-        string TestMethodAsync()
+        private string TestMethodAsync()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-
 
             loadJumpInit();
             startMeasure();
@@ -169,7 +185,7 @@ namespace TrunkPressingCore.Window
 
         #region 初始化函数
 
-       public void loadJumpInit()
+        public void loadJumpInit()
         {
             ScoreDir = Path.Combine(strMainModule, "Score");
             if (!Directory.Exists(ScoreDir)) Directory.CreateDirectory(ScoreDir);
@@ -200,14 +216,12 @@ namespace TrunkPressingCore.Window
                                     status = bl
                                 });
                             }
-
                         }
                         updateTargetListView(true);
                     }
                 }
                 catch (Exception ex)
                 {
-
                     LoggerHelper.Debug(ex);
                 }
             }
@@ -239,7 +253,6 @@ namespace TrunkPressingCore.Window
                  else if (strg[0] == "投掷实心球")
                  {
                      projectTypeCbx.SelectedIndex = 1;
-
                  }
                  else if (strg[0] == "坐位体前屈")
                  {
@@ -250,12 +263,12 @@ namespace TrunkPressingCore.Window
                      projectTypeCbx.SelectedIndex = 3;
                  }
              }*/
-
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        void RunTestLoadInit()
+        private void RunTestLoadInit()
         {
             try
             {
@@ -268,24 +281,23 @@ namespace TrunkPressingCore.Window
             }
             catch (Exception ex)
             {
-
                 LoggerHelper.Debug(ex);
             }
         }
-        #endregion
 
+        #endregion 初始化函数
 
         #region 公用函数
 
         public double str2double(string str)
         {
-
             double i = 0;
             if (null == str)
                 return 0;
             double.TryParse(str, out i);
             return i;
         }
+
         public int str2int(string str)
         {
             int i = 0;
@@ -310,15 +322,14 @@ namespace TrunkPressingCore.Window
             System.Drawing.Point p = new System.Drawing.Point(str2int(strg[0]), str2int(strg[1]));
             return p;
         }
+
         public void drawPointCross(Graphics g, System.Drawing.Point markerTop1, Pen pen)
         {
-
             g.DrawLine(pen, markerTop1.X - 15, markerTop1.Y, markerTop1.X + 15, markerTop1.Y);
             g.DrawLine(pen, markerTop1.X, markerTop1.Y - 15, markerTop1.X, markerTop1.Y + 15);
         }
 
-
-        public void drawPointText(Graphics g, String text, System.Drawing.Point point, Font drawFont, SolidBrush drawBrush,int directionx, int distancex, int directiony, int distancey)
+        public void drawPointText(Graphics g, String text, System.Drawing.Point point, Font drawFont, SolidBrush drawBrush, int directionx, int distancex, int directiony, int distancey)
         {
             //directiony 0 1 上下
             //directionx 0 1 左右
@@ -330,9 +341,11 @@ namespace TrunkPressingCore.Window
                 case 0:
                     x -= distancex;
                     break;
+
                 case 1:
                     x += distancex;
                     break;
+
                 default:
                     break;
             }
@@ -342,6 +355,7 @@ namespace TrunkPressingCore.Window
                 case 0:
                     y -= distancey;
                     break;
+
                 case 1:
                     y += distancey;
                     break;
@@ -353,10 +367,10 @@ namespace TrunkPressingCore.Window
             g.DrawString(text, drawFont, drawBrush, x, y);
         }
 
-
-        #endregion
+        #endregion 公用函数
 
         #region 定时器模块
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             double v = MemoryTool.GetProcessUsedMemory();
@@ -368,6 +382,7 @@ namespace TrunkPressingCore.Window
             frameSpeed_txt.Text = "fps:" + frameRecSum;
             frameRecSum = 0;
         }
+
         private void timer2_Tick(object sender, EventArgs e)
         {
             if (RecordEnd == 1)
@@ -377,7 +392,6 @@ namespace TrunkPressingCore.Window
                     imgProgressBar.Maximum = remainderImgSum;
                     imgProgressBar.Value = remainderImgCount;
                 }
-
             }
             else if (RecordEnd == 2)
             {
@@ -396,7 +410,6 @@ namespace TrunkPressingCore.Window
                 {
                     try
                     {
-
                         rgbVideoSourceStop();
                         nowRaceStudentData.state = 1;
                         ControlHelper.ThreadInvokerControl(this, () =>
@@ -534,29 +547,23 @@ namespace TrunkPressingCore.Window
                                         pictureBox1.Image = imgMs[index].img;
                                         recImgIndex.Text = $"图片索引:{nowFileName}";
                                         pictureBox1.Refresh();
-
                                     });
-
                                 }
                                 startMeasure();
                                 dispJumpLength1(maxW, maxH);
                                 pictureBox1.Refresh();
                                 stopMeasure();
-
                             }
                             else
                             {
                                 setHScrollBarValue(imgMs.Count - 1);
                             }
-
                         }
                     }
                     catch (Exception ex)
                     {
-
                         LoggerHelper.Debug(ex);
                     }
-
                 }
                 else
                 {
@@ -565,19 +572,18 @@ namespace TrunkPressingCore.Window
             }
         }
 
+        #endregion 定时器模块
 
-        #endregion
+        private bool UpdateListViewRun = false;
 
-        bool UpdateListViewRun = false;
         /// <summary>
         /// 更新名单视图
         /// </summary>
         /// <param name="ProjectId"></param>
         /// <param name="GroupName"></param>
         /// <param name="roundId"></param>
-        void UpdateListView(string ProjectId, string GroupName, int roundId)
+        private void UpdateListView(string ProjectId, string GroupName, int roundId)
         {
-
             if (UpdateListViewRun) return;
             UpdateListViewRun = true;
             try
@@ -652,12 +658,12 @@ namespace TrunkPressingCore.Window
                 stuView.ClearSelection();
                 UpdateListViewRun = false;
             }
-
         }
+
         /// <summary>
         /// 更新本项目轮次次数
         /// </summary>
-        void updateRoundCountCombox()
+        private void updateRoundCountCombox()
         {
             try
             {
@@ -669,7 +675,6 @@ namespace TrunkPressingCore.Window
             }
             catch (Exception ex)
             {
-
                 LoggerHelper.Debug(ex);
             }
         }
@@ -678,7 +683,7 @@ namespace TrunkPressingCore.Window
         /// 更新组信息
         /// </summary>
         /// <param name="groupname"></param>
-        void updateGroupCombox(string groupname = "")
+        private void updateGroupCombox(string groupname = "")
         {
             try
             {
@@ -707,7 +712,6 @@ namespace TrunkPressingCore.Window
             }
             catch (Exception ex)
             {
-
                 LoggerHelper.Debug(ex);
             }
         }
@@ -731,7 +735,6 @@ namespace TrunkPressingCore.Window
         {
             _GroupName = "";
             updateGroupCombox();
-
         }
 
         /// <summary>
@@ -749,7 +752,6 @@ namespace TrunkPressingCore.Window
                 nowRaceStudentData = new RaceStudentData();
             }
         }
-
 
         /// <summary>
         /// 选择组触发事件
@@ -770,17 +772,15 @@ namespace TrunkPressingCore.Window
                         nowRaceStudentData = new RaceStudentData();
                     }
                 });
-
             }
             catch (Exception ex)
             {
-
                 LoggerHelper.Debug(ex);
             }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -791,11 +791,12 @@ namespace TrunkPressingCore.Window
                 UpdateListView(_ProjectId, _GroupName, RoundCount0);
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
-        void setHScrollBarValue(int value)
+        private void setHScrollBarValue(int value)
         {
             ControlHelper.ThreadInvokerControl(this, () =>
             {
@@ -811,13 +812,14 @@ namespace TrunkPressingCore.Window
                 }
                 hScrollBar1.Value = value;
             });
-
         }
+
         #region 测距模块
+
         /// <summary>
         /// 开始测距
         /// </summary>
-        void startMeasure()
+        private void startMeasure()
         {
             Measure = true;//测量长度
             ControlHelper.ThreadInvokerControl(this, () =>
@@ -827,7 +829,7 @@ namespace TrunkPressingCore.Window
             });
         }
 
-        void stopMeasure()
+        private void stopMeasure()
         {
             Measure = false;//测量长度
             ControlHelper.ThreadInvokerControl(this, () =>
@@ -836,10 +838,11 @@ namespace TrunkPressingCore.Window
                 button13.BackColor = Color.White;
             });
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        void MeasureFun()
+        private void MeasureFun()
         {
             if (Measure)
             {
@@ -850,6 +853,7 @@ namespace TrunkPressingCore.Window
                 startMeasure();
             }
         }
+
         /// <summary>
         /// 计算角度
         /// </summary>
@@ -874,7 +878,8 @@ namespace TrunkPressingCore.Window
 
             return angleAMB;
         }
-        int falseR0 = 0;
+
+        private int falseR0 = 0;
 
         /// <summary>
         /// 根据长度,求两坐标之间的点坐标
@@ -883,7 +888,7 @@ namespace TrunkPressingCore.Window
         /// <param name="baseStartP"></param>
         /// <param name="baseEndP"></param>
         /// <returns></returns>
-        System.Drawing.Point len2xy(double len, System.Drawing.Point baseStartP, System.Drawing.Point baseEndP)
+        private System.Drawing.Point len2xy(double len, System.Drawing.Point baseStartP, System.Drawing.Point baseEndP)
         {
             System.Drawing.Point pout = new System.Drawing.Point();
 
@@ -900,7 +905,8 @@ namespace TrunkPressingCore.Window
 
             return pout;
         }
-        System.Drawing.Point len2yx(double len, System.Drawing.Point baseStartP, System.Drawing.Point baseEndP)
+
+        private System.Drawing.Point len2yx(double len, System.Drawing.Point baseStartP, System.Drawing.Point baseEndP)
         {
             System.Drawing.Point pout = new System.Drawing.Point();
 
@@ -911,7 +917,6 @@ namespace TrunkPressingCore.Window
             double yt1 = len1 / Math.Sqrt((dx * dx) / (dy * dy) + 1);
             double xt1 = (dx * yt1) / dy;
 
-
             pout.X = baseStartP.X + (int)(xt1 + 0.5);
             pout.Y = baseStartP.Y + (int)(yt1 + 0.5);
 
@@ -920,27 +925,25 @@ namespace TrunkPressingCore.Window
 
         /// <summary>
         /// 求两点长度
-        /// 
+        ///
         /// </summary>
         /// <param name="StartP"></param>
         /// <param name="EndP"></param>
         /// <returns></returns>
-        double getLenForm2Point(System.Drawing.Point StartP, System.Drawing.Point EndP)
+        private double getLenForm2Point(System.Drawing.Point StartP, System.Drawing.Point EndP)
         {
             double len = Math.Sqrt((StartP.X - EndP.X) * (StartP.X - EndP.X) + (StartP.Y - EndP.Y) * (StartP.Y - EndP.Y));
             return len;
         }
 
-
-        int judgeSide(System.Drawing.Point P1, System.Drawing.Point P2, System.Drawing.Point point)
+        private int judgeSide(System.Drawing.Point P1, System.Drawing.Point P2, System.Drawing.Point point)
         {
             return ((P2.Y - P1.Y) * point.X + (P1.X - P2.X) * point.Y + (P2.X * P1.Y - P1.X * P2.Y));
         }
 
+        private System.Drawing.Point mousePoint;
 
-        System.Drawing.Point mousePoint;
-
-        void dispJumpLength1(int x3, int y3)
+        private void dispJumpLength1(int x3, int y3)
         {
             if (Measure == false) return;//不测量
             if (recTimeR0 > 0) return;
@@ -963,11 +966,9 @@ namespace TrunkPressingCore.Window
             try
             {
                 VerticalDistance(gfencePnts, mousePoint, ref markerTopJumpY, ref markerBottomJumpY, ref MeasureLenY);
-
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine(ex.Message);
             }
 
@@ -992,7 +993,6 @@ namespace TrunkPressingCore.Window
                     }
                     MeasureLen = Math.Sqrt((distancey * distancey) + (distancex * distancex));
                 }
-
             }
             catch (Exception ex)
             {
@@ -1010,7 +1010,7 @@ namespace TrunkPressingCore.Window
         /// <param name="outTopP"></param>
         /// <param name="outBottomP"></param>
         /// <param name="outLen"></param>
-        void VerticalDistance(List<System.Drawing.Point[]> gPnts, System.Drawing.Point mousePoint,
+        private void VerticalDistance(List<System.Drawing.Point[]> gPnts, System.Drawing.Point mousePoint,
             ref System.Drawing.Point outTopP, ref System.Drawing.Point outBottomP, ref double outLen)
         {
             int nLen = gPnts.Count;
@@ -1045,7 +1045,6 @@ namespace TrunkPressingCore.Window
 
             while (!((AngleMaxtopP.Y >= mousePoint.Y) && (AngleMaxbotP.Y >= mousePoint.Y)) && div1 <= 1)
             {
-
                 try
                 {
                     double angleP12M = 0;
@@ -1117,7 +1116,6 @@ namespace TrunkPressingCore.Window
                 {
                     LoggerHelper.Debug(ex);
                 }
-
             }
 
             falseR0++;
@@ -1128,8 +1126,6 @@ namespace TrunkPressingCore.Window
             nowLen = lenq * fullLenPix;
             nowLen += (baseLen * 10);
             outLen = nowLen;//测量长度
-
-
         }
 
         /// <summary>
@@ -1145,7 +1141,7 @@ namespace TrunkPressingCore.Window
         /// <param name="baseLen"></param>
         /// <param name="fullLenPix"></param>
         /// <param name="outLen"></param>
-        void drawMousePointLine1(System.Drawing.Point mousePoint, System.Drawing.Point topStartP, System.Drawing.Point topEndP, System.Drawing.Point bottomStartP, System.Drawing.Point bottomEndP,
+        private void drawMousePointLine1(System.Drawing.Point mousePoint, System.Drawing.Point topStartP, System.Drawing.Point topEndP, System.Drawing.Point bottomStartP, System.Drawing.Point bottomEndP,
         ref System.Drawing.Point outTopP, ref System.Drawing.Point outBottomP, double baseLen, double fullLenPix, ref double outLen)
         {
             //计算上标点和下标点到鼠标点的角度,180度成直线,
@@ -1170,7 +1166,6 @@ namespace TrunkPressingCore.Window
             double angleP12MTemp = 0;
             while (!((AngleMaxtopP.X >= mousePoint.X) && (AngleMaxbotP.X >= mousePoint.X)) && div1 <= 1)
             {
-
                 try
                 {
                     double angleP12M = 0;
@@ -1240,9 +1235,7 @@ namespace TrunkPressingCore.Window
                 catch (Exception ex)
                 {
                     LoggerHelper.Debug(ex);
-
                 }
-
             }
 
             falseR0++;
@@ -1253,16 +1246,12 @@ namespace TrunkPressingCore.Window
             nowLen = lenq * fullLenPix;
             nowLen += (baseLen * 10);
             outLen = nowLen;//测量长度
-
-
-
         }
 
+        #endregion 测距模块
 
-        #endregion
-
-        
         #region 成绩上传
+
         /// <summary>
         /// 本次成绩上传
         /// </summary>
@@ -1275,13 +1264,13 @@ namespace TrunkPressingCore.Window
             threadRead.IsBackground = true;
             threadRead.Start();
         }
-        void uploadScoreForNowGroup(object obj)
+
+        private void uploadScoreForNowGroup(object obj)
         {
             ControlHelper.ThreadInvokerControl(this, () =>
             {
                 button2.Text = "上传中";
                 button2.BackColor = Color.Red;
-
             });
             string[] fusp = new string[2];
             fusp[0] = _ProjectName;
@@ -1340,7 +1329,7 @@ namespace TrunkPressingCore.Window
                     sql0 += $" AND Name = '{groupName}'";
                 }
                 List<Dictionary<string, string>> sqlGroupsResults = sQLiteHelper.ExecuteReaderList(sql0);
-                UploadResultsRequestParameter urrp = new  UploadResultsRequestParameter();
+                UploadResultsRequestParameter urrp = new UploadResultsRequestParameter();
                 urrp.AdminUserName = localInfos["AdminUserName"];
                 urrp.TestManUserName = localInfos["TestManUserName"];
                 urrp.TestManPassword = localInfos["TestManPassword"];
@@ -1386,15 +1375,16 @@ namespace TrunkPressingCore.Window
                         ///成绩
                         List<Dictionary<string, string>> resultScoreList1 = sQLiteHelper.ExecuteReaderList(
                             $"SELECT Id,CreateTime,RoundId,State,uploadState,Result FROM ResultInfos WHERE PersonId='{stu["Id"]}' And IsRemoved=0 And RoundId={nowRound} LIMIT 1");
+
                         #region 查询文件
+
                         //成绩根目录
                         Dictionary<string, string> dic_images = new Dictionary<string, string>();
                         Dictionary<string, string> dic_viedos = new Dictionary<string, string>();
                         Dictionary<string, string> dic_texts = new Dictionary<string, string>();
                         //string scoreRoot = Application.StartupPath + $"\\Scores\\{projectName}\\{stu["GroupName"]}\\";
 
-                        #endregion
-
+                        #endregion 查询文件
 
                         foreach (var item in resultScoreList1)
                         {
@@ -1430,7 +1420,6 @@ namespace TrunkPressingCore.Window
                         ssi.Rounds = roundsItems;
                         sudentsItems.Add(ssi);
                         map.Add(stu["IdNumber"], stu["Id"]);
-
                     }
                     urrp.studentDatas = sudentsItems;
 
@@ -1438,12 +1427,12 @@ namespace TrunkPressingCore.Window
                     string JsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(urrp);
                     string url = localInfos["Platform"] + RequestUrl.UploadResults;
 
-                    var httpUpload = new  HttpUpload();
+                    var httpUpload = new HttpUpload();
                     var formDatas = new List<FromDataItemModel>();
                     //添加其他字段
                     formDatas.Add(new FromDataItemModel()
                     {
-                        key= "data",
+                        key = "data",
                         value = JsonStr
                     });
 
@@ -1452,7 +1441,7 @@ namespace TrunkPressingCore.Window
                     logWirte.AppendLine(JsonStr);
 
                     //上传学生成绩
-                    string result =  HttpUpload.PostFromData(url, formDatas);
+                    string result = HttpUpload.PostFromData(url, formDatas);
                     UpLoadResult upload_Result = Newtonsoft.Json.JsonConvert.DeserializeObject<UpLoadResult>(result);
                     if (upload_Result.Error != null)
                     {
@@ -1496,7 +1485,6 @@ namespace TrunkPressingCore.Window
                 sb.AppendLine("*****************error**********************");
                 System.Data.SQLite.SQLiteTransaction sQLiteTransaction = sQLiteHelper.BeginTransaction();
 
-
                 sb.AppendLine("******************success*********************");
                 foreach (var item in successList)
                 {
@@ -1523,7 +1511,6 @@ namespace TrunkPressingCore.Window
                 }
                 catch (Exception ex)
                 {
-
                     LoggerHelper.Debug(ex);
                 }
 
@@ -1535,23 +1522,19 @@ namespace TrunkPressingCore.Window
                 LoggerHelper.Debug(ex);
                 return ex.Message;
             }
-
-
         }
 
-
-
-        #endregion
-
-
+        #endregion 成绩上传
 
         #region 图像显示
-        OpenCvSharp.VideoWriter VideoOutPut;
+
+        private OpenCvSharp.VideoWriter VideoOutPut;
         private object bmpObj = new object();
         private Bitmap bmpSoure = new Bitmap(1, 1);
         private int _width;
         private int _height;
-        class TargetPoint
+
+        private class TargetPoint
         {
             public string name;
             public int x;
@@ -1559,49 +1542,60 @@ namespace TrunkPressingCore.Window
             public int dis;
             public bool status;
         }
-        string jpName = "";
-        string jpDis = "";
-        bool jpStatus = true;//true是上定点,false是下定点
-        bool isMirrorMode = false;
+
+        private string jpName = "";
+        private string jpDis = "";
+        private bool jpStatus = true;//true是上定点,false是下定点
+        private bool isMirrorMode = false;
+
         //记录定标数据
-        List<TargetPoint> targetPoints = new List<TargetPoint>();
-        PointForm1 pf1 = new PointForm1();//? 画点界面
-        List<TargetPoint> TopListSort = new List<TargetPoint>();//? 顶部坐标列表
-        List<TargetPoint> BottomListSort = new List<TargetPoint>();//? 底部坐标列表
-        System.Drawing.Point cenMarkPoint;//? 铅球中心点
-        System.Drawing.Point markerTopJumpY, markerBottomJumpY, markerTopJump, markerBottomJump, markerTmp, mouseMovePoint;
-        List<System.Drawing.Point[]> gfencePnts = new List<System.Drawing.Point[]>();
-        List<int[]> gfencePntsDisValue = new List<int[]>();
-        int GCCounta = 0;
-        int videoSourceRuningR0 = 0;
-        int frameRecSum = 0;//计算帧数
+        private List<TargetPoint> targetPoints = new List<TargetPoint>();
+
+        private PointForm1 pf1 = new PointForm1();//? 画点界面
+        private List<TargetPoint> TopListSort = new List<TargetPoint>();//? 顶部坐标列表
+        private List<TargetPoint> BottomListSort = new List<TargetPoint>();//? 底部坐标列表
+        private System.Drawing.Point cenMarkPoint;//? 铅球中心点
+        private System.Drawing.Point markerTopJumpY, markerBottomJumpY, markerTopJump, markerBottomJump, markerTmp, mouseMovePoint;
+        private List<System.Drawing.Point[]> gfencePnts = new List<System.Drawing.Point[]>();
+        private List<int[]> gfencePntsDisValue = new List<int[]>();
+        private int GCCounta = 0;
+        private int videoSourceRuningR0 = 0;
+        private int frameRecSum = 0;//计算帧数
+
         /// <summary>
         /// 定标参数
         /// </summary>
         public int colum = 0;
+
         public int initDis = 0;
         public int distance = 0;
         public int nowColum = 0;
-        int formShowStatus = 0;
+        private int formShowStatus = 0;
 
         public struct ImageAndIndex
         {
             //图片顺序索引
             public int index;
+
             public Bitmap image;
         }
+
         private object ImageQueuesLock = new object();
         private ConcurrentQueue<ImageAndIndex> ImageQueues = new ConcurrentQueue<ImageAndIndex>();
-        Bitmap backBp = null;
-        Bitmap resultBp = null;
+        private Bitmap backBp = null;
+        private Bitmap resultBp = null;
+
         //? 是否实心球模式
-        bool isBallCheckBoxb = false;
+        private bool isBallCheckBoxb = false;
+
         //? 是否展示选择
-        bool isShowImgList = true;
+        private bool isShowImgList = true;
+
         //? 是不是铅球
-        bool isShotPut = false;
+        private bool isShotPut = false;
+
         //? 是不是坐位体前屈
-        bool isSitting = false;
+        private bool isSitting = false;
 
         public class imgMsS
         {
@@ -1612,24 +1606,29 @@ namespace TrunkPressingCore.Window
             public string name;
             public bool[][] isHand;
         }
+
         public List<imgMsS> imgMs = new List<imgMsS>();
-        string ReservedDigitsTxt = "0.000";
+        private string ReservedDigitsTxt = "0.000";
+
         /// <summary>
         /// 视频输入设备信息
         /// </summary>
         private FilterInfoCollection filterInfoCollection;
+
         /// <summary>
         /// RGB摄像头设备
         /// </summary>
         private VideoCaptureDevice rgbDeviceVideo;
-        FuseImage fuseImg = null;
-        int skipFrameDispR0 = 0;
-        int cameraSkip = 0;
-        OpenCvSharp.Point[] conPoints0 = new OpenCvSharp.Point[4];
+
+        private FuseImage fuseImg = null;
+        private int skipFrameDispR0 = 0;
+        private int cameraSkip = 0;
+        private OpenCvSharp.Point[] conPoints0 = new OpenCvSharp.Point[4];
+
         /// <summary>
         /// 更新标点显示
         /// </summary>
-        void updateTargetListView(bool flag = false)
+        private void updateTargetListView(bool flag = false)
         {
             //gfencePnts
             gfencePnts.Clear();
@@ -1691,10 +1690,10 @@ namespace TrunkPressingCore.Window
                 conPoints0[2] = new OpenCvSharp.Point(rect0.X, rect0.Y + rect0.Height);
                 conPoints0[3] = new OpenCvSharp.Point(rect0.X + rect0.Width, rect0.Y + rect0.Height);
             }
-
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private void CameraInit()
         {
@@ -1767,8 +1766,9 @@ namespace TrunkPressingCore.Window
             }
             return flag;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public bool rgbVideoSourceStart()
@@ -1789,6 +1789,7 @@ namespace TrunkPressingCore.Window
             flag = openCamearaFun(cameraName);
             return flag;
         }
+
         public void rgbVideoSourceStop()
         {
             CloseCamera();
@@ -1813,8 +1814,8 @@ namespace TrunkPressingCore.Window
                 LoggerHelper.Debug(ex);
                 Console.WriteLine(ex.Message);
             }
-
         }
+
         /// <summary>
         /// 释放写入本地流
         /// </summary>
@@ -1832,6 +1833,7 @@ namespace TrunkPressingCore.Window
                 LoggerHelper.Debug(ex);
             }
         }
+
         public void CloseCamera()
         {
             try
@@ -1851,7 +1853,7 @@ namespace TrunkPressingCore.Window
             }
         }
 
-        bool openCamearaFun(string cameraName)
+        private bool openCamearaFun(string cameraName)
         {
             bool flag = LoadCamera(cameraName);
             if (!flag)
@@ -1867,6 +1869,7 @@ namespace TrunkPressingCore.Window
             }
             return flag;
         }
+
         private void rgbVideoSource_SizeChanged(object sender, EventArgs e)
         {
             pBox1Width = rgbVideoSource.Width;
@@ -1875,9 +1878,9 @@ namespace TrunkPressingCore.Window
 
         private void rgbVideoSource_MouseDown(object sender, MouseEventArgs e)
         {
-
         }
-        void saveMarkSetting()
+
+        private void saveMarkSetting()
         {
             StringBuilder builder = new StringBuilder();
             foreach (var t in targetPoints)
@@ -1900,26 +1903,27 @@ namespace TrunkPressingCore.Window
 
         private void rgbVideoSource_MouseMove(object sender, MouseEventArgs e)
         {
-
         }
+
         /// <summary>
         /// 刷新视频显示
         /// </summary>
-        void rgbVideoSourceRePaint()
+        private void rgbVideoSourceRePaint()
         {
             pictureBox1.Refresh();
             if (!rgbVideoSource.IsRunning)
                 rgbVideoSource.Refresh();
         }
 
-        bool rgbVideoSourcePaintFlag = false;
+        private bool rgbVideoSourcePaintFlag = false;
+
         private void rgbVideoSource_Paint(object sender, PaintEventArgs e)
         {
             skipFrameDispR0++;
             if (rgbVideoSourcePaintFlag) return;
             rgbVideoSourcePaintFlag = true;
             //float offsetX = pBox1Width * 1f / bmp.Width;
-            //float offsetY = pBox1Height * 1f / bmp.Height; 
+            //float offsetY = pBox1Height * 1f / bmp.Height;
             try
             {
                 if (skipFrameDispR0 < cameraSkip)
@@ -2013,10 +2017,10 @@ namespace TrunkPressingCore.Window
                 }
                 rgbVideoSourcePaintFlag = false;
             }
-
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2064,8 +2068,9 @@ namespace TrunkPressingCore.Window
             dispJumpLength1(e.X, e.Y);
             rgbVideoSourceRePaint();
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2087,6 +2092,7 @@ namespace TrunkPressingCore.Window
             }
             rgbVideoSourceRePaint();
         }
+
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             #region 画图
@@ -2160,7 +2166,7 @@ namespace TrunkPressingCore.Window
             drawBrush = new SolidBrush(Color.Red);// Create point for upper-left corner of drawing.
             drawPointText(e.Graphics, $"成绩:{Len}{dangwei}", new System.Drawing.Point(10, 10), drawFont, drawBrush, 1, 10, 1, 0);
             e.Graphics.FillRectangle(new SolidBrush(Color.White), new Rectangle(new System.Drawing.Point(350, 0), new System.Drawing.Size(1000, 50)));
-            //时间 
+            //时间
             e.Graphics.DrawString($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}", new Font("微软雅黑", 14), drawBrush, 350, 15);
             //考生姓名和学号
             if (isHaveStudent(false))
@@ -2174,7 +2180,9 @@ namespace TrunkPressingCore.Window
                 pen.DashPattern = new float[] { 5f, 10f };
                 e.Graphics.DrawLine(pen, cenMarkPoint, mousePoint);
             }
+
             #region 方框
+
             /*bool m_flag = true;
             Array.ForEach(conPoints0, (a) =>
             {
@@ -2196,21 +2204,25 @@ namespace TrunkPressingCore.Window
                }
             }*/
 
-            #endregion
-            #endregion
+            #endregion 方框
 
+            #endregion 画图
         }
-        int sleepCount = 0;
-        int RecordEnd = 0;
+
+        private int sleepCount = 0;
+        private int RecordEnd = 0;
+
         //录像结束剩余图片总数
-        int remainderImgSum = 0;
+        private int remainderImgSum = 0;
+
         //录像结束 未处理图片数
-        int remainderImgCount = 0;
+        private int remainderImgCount = 0;
+
         /// <summary>
         /// 处理实心球合成图
         /// </summary>
         /// <param name="obj"></param>
-        void ImagePredictLabelQueues2ThreadFun(object obj)
+        private void ImagePredictLabelQueues2ThreadFun(object obj)
         {
             while (true)
             {
@@ -2285,7 +2297,6 @@ namespace TrunkPressingCore.Window
                             fuseImg.FuseColorImg1(iplr.image);
                         }
                     }
-
                 }
             }
         }
@@ -2293,7 +2304,7 @@ namespace TrunkPressingCore.Window
         /// <summary>
         /// 打开界面选择录像图片
         /// </summary>
-        void openImgList()
+        private void openImgList()
         {
             if (!isHaveStudent())
             {
@@ -2313,7 +2324,6 @@ namespace TrunkPressingCore.Window
                 {
                     setHScrollBarValue(sp);
                     pictureBox1.Image = imgMs[sp].img;
-
                 }
             }
             else
@@ -2323,14 +2333,12 @@ namespace TrunkPressingCore.Window
                 if (sp < imgMs.Count)
                 {
                     pictureBox1.Image = imgMs[sp].img;
-
                 }
                 else
                 {
                     sp = imgMs.Count - 1;
                     nowFileName = sp + "";
                     pictureBox1.Image = imgMs[sp].img;
-
                 }
             }
             recImgIndex.Text = $"图片索引:{nowFileName}";
@@ -2340,7 +2348,7 @@ namespace TrunkPressingCore.Window
         /// <summary>
         /// 开始录像
         /// </summary>
-        void BeginRec()
+        private void BeginRec()
         {
             if (recTimeR0 > 0)//停止录像
             {
@@ -2356,16 +2364,15 @@ namespace TrunkPressingCore.Window
             {
                 startRec();
             }
-
         }
+
         /// <summary>
         /// 开始计时
         /// </summary>
-        void startRec()
+        private void startRec()
         {
             if (!isHaveStudent())
             {
-
                 return;
             }
             recTimeR0 = 0;
@@ -2401,13 +2408,11 @@ namespace TrunkPressingCore.Window
             SendScore(nowRaceStudentData.name, "开始考试", "");
         }
 
-        #endregion
-
-
+        #endregion 图像显示
 
         #region 控制面板
 
-        void voiceOut0(string str, int rate = 3)
+        private void voiceOut0(string str, int rate = 3)
         {
             Task.Run(() =>
             {
@@ -2419,7 +2424,6 @@ namespace TrunkPressingCore.Window
             });
         }
 
-
         /// <summary>
         /// 写入成绩
         /// </summary>
@@ -2427,14 +2431,13 @@ namespace TrunkPressingCore.Window
         /// <param name="e"></param>
         private void btnWriteScore_Click(object sender, EventArgs e)
         {
-
             WriteScore2Db();
         }
 
         /// <summary>
         /// 写入成绩
         /// </summary>
-        void WriteScore2Db()
+        private void WriteScore2Db()
         {
             if (recTimeR0 > 0)
             {
@@ -2471,7 +2474,6 @@ namespace TrunkPressingCore.Window
                         string txt_GNametxt = nowRaceStudentData.name;
                         double score1 = dmg.score;
 
-
                         string scoreContent = string.Format("时间:{0,-20},项目:{1,-20},组别:{2,-10},准考证号:{3,-20},姓名{4,-5},第{5}次成绩:修改成绩{6,-5}为{7,-5}, 状态:{8,-5}",
                               DateTime.Now.ToString("yyyy年MM月dd日HH:mm:ss"),
                               projectTypeCbxtxt,
@@ -2486,7 +2488,26 @@ namespace TrunkPressingCore.Window
                     }
                     string score = (MeasureLen / fenmu).ToString(ReservedDigitsTxt);
                     Task.Run(() => voiceOut0($"成绩:{score}{dangwei}", 3));
-                    bool sendScoreReturn = SendScore(nowRaceStudentData.name, score);
+                    List<Dictionary<string, string>> localInfos = new List<Dictionary<string, string>>();
+                    localInfos = sQLiteHelper.ExecuteReaderList("SELECT * FROM localInfos");
+                    string index = "";
+                    foreach (var item in localInfos)
+                    {
+                        if (item["key"] == "UploadUnit")
+                        {
+                            index = item["key"];
+                        }
+                    }
+                    string po = "";
+                    if (index == "1")
+                    {
+                        po = "米";
+                    }
+                    else
+                    {
+                        po = "厘米";
+                    }
+                    bool sendScoreReturn = SendScore(nowRaceStudentData.name, score, po);
                     //写入成绩
                     input2Result();
                 }
@@ -2498,10 +2519,12 @@ namespace TrunkPressingCore.Window
         }
 
         #region 右键列表选择处理
+
         private void 缺考ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetErrorState("缺考");
         }
+
         private void 中退ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetErrorState("中退");
@@ -2516,6 +2539,12 @@ namespace TrunkPressingCore.Window
         {
             SetErrorState("弃权");
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void 成绩查询ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -2542,17 +2571,15 @@ namespace TrunkPressingCore.Window
             }
             catch (Exception ex)
             {
-
                 LoggerHelper.Debug(ex);
             }
-
         }
 
         /// <summary>
         /// 设置异常状态
         /// </summary>
         /// <param name="state"></param>
-        void SetErrorState(string state)
+        private void SetErrorState(string state)
         {
             if (stuView.SelectedRows.Count == 0)
             {
@@ -2582,17 +2609,16 @@ namespace TrunkPressingCore.Window
             if (RoundCount0 > 0)
             {
                 UpdateListView(_ProjectId, _GroupName, RoundCount0);
-
             }
         }
-        #endregion
 
+        #endregion 右键列表选择处理
 
         /// <summary>
         /// 当前是否有考生
         /// </summary>
         /// <returns></returns>
-        bool isHaveStudent(bool flag = true)
+        private bool isHaveStudent(bool flag = true)
         {
             if (nowRaceStudentData == null || string.IsNullOrEmpty(nowRaceStudentData.id))
             {
@@ -2631,8 +2657,8 @@ namespace TrunkPressingCore.Window
                 formShowStatus = 1;
                 pf1.Show();
             }
-
         }
+
         /// <summary>
         /// 浏览图像
         /// </summary>
@@ -2652,6 +2678,7 @@ namespace TrunkPressingCore.Window
         {
             OutPutScore();
         }
+
         //导出excel
         private bool OutPutScore(bool flag = false)
         {
@@ -2737,35 +2764,35 @@ namespace TrunkPressingCore.Window
                      p.StartInfo.FileName = path;
                      p.StartInfo.Verb = "print";
                      p.Start();*/
-                   /* Workbook workbook = new Workbook();
-                    workbook.LoadFromFile("Sample.xlsx");
-                    Worksheet sheet = workbook.Worksheets[0];
-                    sheet.PageSetup.PrintArea = "A7:T8";
-                    sheet.PageSetup.PrintTitleRows = "$1:$1";
-                    sheet.PageSetup.FitToPagesWide = 1;
-                    sheet.PageSetup.FitToPagesTall = 1;
-                    //sheet.PageSetup.Orientation =PageOrientationType.Landscape;
-                    //sheet.PageSetup.PaperSize = PaperSizeType.PaperA3;
-                    PrintDialog dialog = newPrintDialog();
-                    dialog.AllowPrintToFile = true;
-                    dialog.AllowCurrentPage = true;
-                    dialog.AllowSomePages = true;
-                    dialog.AllowSelection = true;
-                    dialog.UseEXDialog = true;
-                    dialog.PrinterSettings.Duplex = Duplex.Simplex;
-                    dialog.PrinterSettings.FromPage = 0;
-                    dialog.PrinterSettings.ToPage = 8;
-                    dialog.PrinterSettings.PrintRange = PrintRange.SomePages;
-                    workbook.PrintDialog = dialog;
-                    PrintDocument pd = workbook.PrintDocument;
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    { pd.Print(); }*/
+                    /* Workbook workbook = new Workbook();
+                     workbook.LoadFromFile("Sample.xlsx");
+                     Worksheet sheet = workbook.Worksheets[0];
+                     sheet.PageSetup.PrintArea = "A7:T8";
+                     sheet.PageSetup.PrintTitleRows = "$1:$1";
+                     sheet.PageSetup.FitToPagesWide = 1;
+                     sheet.PageSetup.FitToPagesTall = 1;
+                     //sheet.PageSetup.Orientation =PageOrientationType.Landscape;
+                     //sheet.PageSetup.PaperSize = PaperSizeType.PaperA3;
+                     PrintDialog dialog = newPrintDialog();
+                     dialog.AllowPrintToFile = true;
+                     dialog.AllowCurrentPage = true;
+                     dialog.AllowSomePages = true;
+                     dialog.AllowSelection = true;
+                     dialog.UseEXDialog = true;
+                     dialog.PrinterSettings.Duplex = Duplex.Simplex;
+                     dialog.PrinterSettings.FromPage = 0;
+                     dialog.PrinterSettings.ToPage = 8;
+                     dialog.PrinterSettings.PrintRange = PrintRange.SomePages;
+                     workbook.PrintDialog = dialog;
+                     PrintDocument pd = workbook.PrintDocument;
+                     if (dialog.ShowDialog() == DialogResult.OK)
+                     { pd.Print(); }*/
                     Workbook workbook = new Workbook();
                     workbook.LoadFromFile(path);
                     Worksheet sheet = workbook.Worksheets[0];
                     //设置打印纸张大小
                     sheet.PageSetup.PaperSize = PaperSizeType.PaperA4;
-                   // sheet.PageSetup.PrintArea = "B2:F8";
+                    // sheet.PageSetup.PrintArea = "B2:F8";
                     PrintDialog dialog = new PrintDialog();
                     dialog.AllowPrintToFile = true;
                     dialog.AllowCurrentPage = true;
@@ -2780,11 +2807,9 @@ namespace TrunkPressingCore.Window
                     PrintDocument pd = workbook.PrintDocument;
                     if (dialog.ShowDialog() == DialogResult.OK)
                     { pd.Print(); }
-                   // var sl = SetExcelToWorld(path);
-                  
+                    // var sl = SetExcelToWorld(path);
                 }
                 return result;
-
             }
             catch (Exception ex)
             {
@@ -2792,7 +2817,7 @@ namespace TrunkPressingCore.Window
                 return false;
             }
         }
-         
+
         /// <summary>
         /// 测量
         /// </summary>
@@ -2802,6 +2827,7 @@ namespace TrunkPressingCore.Window
         {
             MeasureFun();
         }
+
         /// <summary>
         /// 上一张
         /// </summary>
@@ -2816,7 +2842,8 @@ namespace TrunkPressingCore.Window
             }
             dispDecPic();
         }
-        void dispDecPic()
+
+        private void dispDecPic()
         {
             if (!isHaveStudent())
             {
@@ -2849,6 +2876,7 @@ namespace TrunkPressingCore.Window
             }
             rgbVideoSourceRePaint();
         }
+
         /// <summary>
         /// 下一张
         /// </summary>
@@ -2864,11 +2892,10 @@ namespace TrunkPressingCore.Window
             dispIncPic();
         }
 
-        void dispIncPic()
+        private void dispIncPic()
         {
             if (!isHaveStudent())
             {
-
                 uiTabControl1.SelectedIndex = 0;
                 return;
             }
@@ -2896,7 +2923,6 @@ namespace TrunkPressingCore.Window
             }
 
             rgbVideoSourceRePaint();
-
         }
 
         private bool beginTest()
@@ -2922,9 +2948,10 @@ namespace TrunkPressingCore.Window
                 FrmTips.ShowTipsError(this, "摄像头未开启");
                 return false;
             }
-
         }
-        bool isActive=false;
+
+        private bool isActive = false;
+
         /// <summary>
         /// 选择考生
         /// </summary>
@@ -2950,7 +2977,7 @@ namespace TrunkPressingCore.Window
                 nowRaceStudentData.groupName = _GroupName;
                 nowRaceStudentData.RoundId = RoundCount0;
                 SendScore(nowRaceStudentData.name, "准备考试", "");
-                stuView.ReadOnly=true;
+                stuView.ReadOnly = true;
             }
             catch (Exception ex)
             {
@@ -2961,7 +2988,6 @@ namespace TrunkPressingCore.Window
             {
                 pictureBox1.Refresh();
             }
-
         }
 
         /// <summary>
@@ -2973,6 +2999,7 @@ namespace TrunkPressingCore.Window
         {
             BeginRec();
         }
+
         /// <summary>
         /// 测量最大值
         /// </summary>
@@ -3042,7 +3069,6 @@ namespace TrunkPressingCore.Window
                     string Log = $"最大值:index:{index},X:{maxW}  y:{maxH}";
                     WriteLog(lrtxtLog, Log, 0);
 
-
                     if (imgMs[index] != null && imgMs[index].img != null)
                     {
                         nowFileName = index + "";
@@ -3057,7 +3083,6 @@ namespace TrunkPressingCore.Window
                     dispJumpLength1(maxW, maxH);
                     pictureBox1.Refresh();
                     stopMeasure();
-
                 }
                 else
                 {
@@ -3065,8 +3090,8 @@ namespace TrunkPressingCore.Window
                     return;
                 }
             }
-
         }
+
         /// <summary>
         /// 测量停顿值
         /// </summary>
@@ -3173,9 +3198,7 @@ namespace TrunkPressingCore.Window
                             pictureBox1.Image = imgMs[index].img;
                             recImgIndex.Text = $"图片索引:{nowFileName}";
                             pictureBox1.Refresh();
-
                         });
-
                     }
                     startMeasure();
                     dispJumpLength1(maxW, maxH);
@@ -3187,11 +3210,11 @@ namespace TrunkPressingCore.Window
                     UIMessageBox.ShowError("请先开始测试,得到测试图像后在点击");
                     return;
                 }
-
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -3215,6 +3238,7 @@ namespace TrunkPressingCore.Window
             }
             openCamearaFun(cameraName);
         }
+
         /// <summary>
         /// 摄像头属性设置
         /// </summary>
@@ -3229,9 +3253,11 @@ namespace TrunkPressingCore.Window
             }
             openCameraSetting();
         }
-        string cameraName = String.Empty;
-        int maxFps = 0;
-        int Fps = 0;
+
+        private string cameraName = String.Empty;
+        private int maxFps = 0;
+        private int Fps = 0;
+
         /// <summary>
         /// 打开摄像头设置
         /// </summary>
@@ -3285,8 +3311,9 @@ namespace TrunkPressingCore.Window
                 rgbVideoSourceRePaint();
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -3335,14 +3362,14 @@ namespace TrunkPressingCore.Window
                 button11.Visible = false;
             }
         }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             isMirrorMode = checkBox1.Checked;
         }
-        
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -3412,17 +3439,14 @@ namespace TrunkPressingCore.Window
             Thread threadRead = new Thread(method);
             threadRead.IsBackground = true;
             threadRead.Start();
-
         }
 
-        bool isShowHandFlag = false;
+        private bool isShowHandFlag = false;
+
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             isShowHandFlag = checkBox2.Checked;
         }
-
-
-
 
         /// <summary>
         /// 写入结果集
@@ -3449,7 +3473,8 @@ namespace TrunkPressingCore.Window
             //nextMode();
             rgbVideoSourceStart();
         }
-        void makeEndResult()
+
+        private void makeEndResult()
         {
             double fenmu = 1000;
             if (isSitting)
@@ -3477,10 +3502,11 @@ namespace TrunkPressingCore.Window
             System.IO.File.AppendAllText(@"./成绩日志.txt", scoreContent + "\n");
             updateJumpLen();
         }
+
         /// <summary>
         /// 写入数据库
         /// </summary>
-        void updateJumpLen()
+        private void updateJumpLen()
         {
             System.Data.SQLite.SQLiteTransaction sQLiteTransaction = sQLiteHelper.BeginTransaction();
             try
@@ -3513,7 +3539,7 @@ namespace TrunkPressingCore.Window
         /// <summary>
         /// 保存文件
         /// </summary>
-        void saveOkFileOut()
+        private void saveOkFileOut()
         {
             //nowTestDir
             string savePath = Path.Combine(nowTestDir, $"落地_{nowRaceStudentData.idNumber}.jpg");
@@ -3590,7 +3616,6 @@ namespace TrunkPressingCore.Window
                                     System.Drawing.Point p = new System.Drawing.Point(mark.x, mark.y);
                                     System.Drawing.Point p1 = new System.Drawing.Point(mark1.x, mark1.y);
                                     graphic.DrawLine(pen, p, p1);
-
                                 }
                             }
 
@@ -3601,15 +3626,13 @@ namespace TrunkPressingCore.Window
                             if (isSitting)
                             {
                                 graphic.DrawString((MeasureLen / 10).ToString(ReservedDigitsTxt) + dangwei, drawFont, drawBrush, markerBottomJumpT.X - 70, markerBottomJumpT.Y);
-
                             }
                             else
                             {
                                 graphic.DrawString((MeasureLen / 1000).ToString(ReservedDigitsTxt) + dangwei, drawFont, drawBrush, markerBottomJumpT.X - 70, markerBottomJumpT.Y);
-
                             }
 
-                            //时间 
+                            //时间
                             graphic.FillRectangle(new SolidBrush(Color.White), new Rectangle(new System.Drawing.Point(350, 0), new System.Drawing.Size(300, 50)));
                             graphic.DrawString($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}", new Font("Arial", 20), drawBrush, 360, 10);
 
@@ -3678,49 +3701,36 @@ namespace TrunkPressingCore.Window
             }
         }
 
-        void imgJpgSave(Image img, string path)
+        private void imgJpgSave(Image img, string path)
         {
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path);
             img.Save(path);
         }
 
-
         #endregion 控制面板
-
-
-
 
         #region 单人显示屏
 
-        ScreenSerialReader sReader = null;
+        private ScreenSerialReader sReader = null;
 
         private void AnalyData(byte[] btData)
         {
-
-
-
         }
 
         private void ReceiveData(byte[] btData)
         {
-
-
-
         }
-
 
         private void SendData(byte[] btData)
         {
-
-
-
         }
+
         /// <summary>
         /// 初始化串口
         /// </summary>
         /// <returns></returns>
-        bool serialInit()
+        private bool serialInit()
         {
             bool flag = true;
             try
@@ -3736,11 +3746,9 @@ namespace TrunkPressingCore.Window
                     //serialInit();
                     ConnectPort();
                 }
-
             }
             catch (Exception)
             {
-
                 flag = false;
             }
             return flag;
@@ -3748,20 +3756,21 @@ namespace TrunkPressingCore.Window
 
         private void recTimeTxt_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
-        
+        private void RefreshSerialPortBtn_Click(object sender, EventArgs e)
+        {
+        }
 
-
-
-
+        private void openSerialPortBtn_Click(object sender, EventArgs e)
+        {
+        }
 
         /// <summary>
         /// 刷新串口
         /// </summary>
         /// <returns></returns>
-        bool RefreshComPorts()
+        private bool RefreshComPorts()
         {
             bool flag = false;
             try
@@ -3781,18 +3790,16 @@ namespace TrunkPressingCore.Window
             }
             catch (Exception)
             {
-
                 flag = false;
             }
 
             return flag;
         }
 
-
         /// <summary>
         /// 串口连接
         /// </summary>
-        void ConnectPort()
+        private void ConnectPort()
         {
             if (sReader.IsConnectOpen())
             {
@@ -3828,12 +3835,9 @@ namespace TrunkPressingCore.Window
                 }
                 catch (Exception ex)
                 {
-
                     LoggerHelper.Debug(ex);
                 }
-
             }
-
         }
 
         /// <summary>
@@ -3841,7 +3845,7 @@ namespace TrunkPressingCore.Window
         /// </summary>
         /// <param name="name"></param>
         /// <param name="Score"></param>
-        bool SendScore(string name, string Score, string txt3 = "米")
+        private bool SendScore(string name, string Score, string txt3 = "米")
         {
             if (!sReader.IsConnectOpen()) return false;
             try
@@ -3868,6 +3872,7 @@ namespace TrunkPressingCore.Window
                 lrtxtLog.Clear();
             }));
         }
+
         public void WriteLog(CustomControl.LogRichTextBox logRichTxt, string strLog, int nType)
         {
             try
@@ -3901,14 +3906,10 @@ namespace TrunkPressingCore.Window
             }
             catch (Exception ex)
             {
-
                 LoggerHelper.Debug(ex);
             }
         }
 
-        #endregion
-
-
+        #endregion 单人显示屏
     }
 }
-                                                                                                            
